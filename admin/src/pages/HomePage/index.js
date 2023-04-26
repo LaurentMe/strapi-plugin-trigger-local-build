@@ -25,7 +25,6 @@ const HomePage = () => {
   const { formatMessage } = useIntl();
   const t = (id) => formatMessage({ id: `${pluginId}.home.${id}` });
 
-  const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +40,7 @@ const HomePage = () => {
   const triggerPublish = async () => {
     setBusy(true);
     try {
-      const res = await request(`/${pluginId}/publish`, { method: "GET" });
+      const res = await request(`/publish`, { method: "GET" });
       if (res?.success !== true) {
         handleError();
       }
@@ -51,32 +50,6 @@ const HomePage = () => {
       handleClose();
     }
   };
-
-  useEffect(() => {
-    let timeout;
-
-    const checkBusy = async () => {
-      try {
-        const res = await request(`/${pluginId}/check`, { method: "GET" });
-
-        if (!!res?.busy === res?.busy) {
-          setBusy(res.busy);
-        } else {
-          handleError();
-        }
-
-        timeout = setTimeout(checkBusy, POLL_INTERVAL);
-      } catch (e) {
-        handleError(e);
-      } finally {
-        setReady(true);
-      }
-    };
-
-    checkBusy();
-
-    return () => clearTimeout(timeout);
-  }, []);
 
   return (
     <Box>
@@ -92,9 +65,9 @@ const HomePage = () => {
           </StyledAlert>
         ) : (
           <PublishButton
-            loading={!ready || busy}
+            loading={busy}
             loadingMessage={t(busy ? "busy" : "notready")}
-            buttonLabel={t("buttons.publish")}
+            buttonLabel={"Deploy"}
             onClick={handleOpen}
           />
         )}
