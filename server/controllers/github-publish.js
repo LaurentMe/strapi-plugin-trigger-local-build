@@ -5,16 +5,14 @@ module.exports = ({ strapi }) => ({
   publish: async (ctx) => {
     const { folder, commands } = strapi.config.get(pluginId);
     //Do something
-    await commands.forEach((command) => {
-      exec("cd " + folder + " ; " + command, (err, output) => {
-        if (err) {
-          console.error(
-            "Failed to execute the following command: " + command.toString()
-          );
-        }
+    await exec("cd " + folder + " ; " + commands, (err, output) => {
+      if (err) {
+        console.error(
+          "Failed to execute the following command: " + commands.toString()
+        );
+      }
 
-        console.log("Successfully executed command.");
-      });
+      console.log("Successfully executed command.");
     });
     ctx.send({ success });
   },
